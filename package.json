@@ -4,7 +4,8 @@
   "description": "PDB ProtVista Viewer",
   "files": [
     "dist",
-    "src"
+    "src",
+    "styles"
   ],
   "main": "dist/protvista-pdb.js",
   "module": "src/index.js",
