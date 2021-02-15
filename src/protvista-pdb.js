@@ -83,6 +83,13 @@ class ProtvistaPDB extends HTMLElement {
         this.viewerData.displayVariants = (this.pageSection && this.pageSection == '2') ? false : true;
 
         this._render();
+        const event = new CustomEvent("rendered", {
+            detail: {
+                pdbIds: this.viewerData.tracks[0].data.map(d => d.accession)
+            }
+        });
+        this.dispatchEvent(event);
+
     }
 
     _render() {
