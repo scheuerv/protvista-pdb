@@ -1,12 +1,3 @@
-import { scaleLinear } from "d3";
-import cloneDeep from "lodash-es/cloneDeep";
-
-import groupBy from "lodash-es/groupBy";
-import flatten from "lodash-es/flatten";
-import uniqBy from "lodash-es/uniqBy";
-import forOwn from "lodash-es/forOwn";
-import intersectionBy from "lodash-es/intersectionBy";
-
 const scaleColours = {
   UPDiseaseColor: "#990000",
   UPNonDiseaseColor: "#99cc00",
@@ -116,6 +107,11 @@ const filterData = [
     }
   }
 ];
+filterData.forEach(filter => {
+  filter.filterData = function (variants) {
+    return applyFilter(filter.name, variants);
+  };
+});
 
 const keywordMap = {
   disease: 'likely_disease',
@@ -129,14 +125,17 @@ const keywordMap = {
   PDB: 'pdb'
 }
 
-const applyFilter = (filterName, variants = []) => {
-  const clonedVariants = cloneDeep(variants) || [];
+const applyFilter = (filterName, variantsAll = []) => {
   const filterKeyword = keywordMap[filterName];
-  return clonedVariants.filter(
-    variant => {
-      return (variant.keywords && variant.keywords.indexOf(filterKeyword) > -1)
-    }
-  );
+  return variantsAll.map(variants => {
+    const clonedVariants = Object.assign({},variants);
+    clonedVariants.variants = variants.variants.filter(
+      variant => {
+        return (variant.keywords && variant.keywords.indexOf(filterKeyword) > -1)
+      }
+    );
+    return clonedVariants;
+  });
 }
 
 const identity = variants => variants;
@@ -150,48 +149,6 @@ export const getFilter = name => {
   return filter ? filter : { applyFilter: identity };
 };
 
-const filterVariants = (filterName, variants) =>
-  { return applyFilter(filterName, variants) };
 
-export const _union = (variants, filterNames, key) => {
-  return uniqBy(
-    flatten(
-      filterNames
-        .map(name => name.split(":")[1])
-        .map(name => { return filterVariants(name, variants)})
-    ),
-    v => v[key]
-  );
-};
-
-export const _getFilteredDataSet = (attrName, oldVal, newVal, dataset) => {
-
-  const { sequence, variants } = dataset;
-      newVal = newVal.trim();
-      if (!newVal) {
-        return { sequence, variants: variants };
-      }
-      const filterNames = newVal.split(",");
-      const groupByFilterCategory = groupBy(filterNames, attrName => {
-        return attrName.split(":")[0];
-      });
-
-      let filteredVariants = [];
-      forOwn(groupByFilterCategory, filterNames => {
-        const filteredValuesByCategory = _union(
-          variants,
-          filterNames,
-          "accession"
-        );
-        filteredVariants.push(filteredValuesByCategory);
-      });
-      filteredVariants = flatten(
-        intersectionBy(...filteredVariants, variant => variant.accession)
-      );
-
-      filteredVariants = uniqBy(filteredVariants, "accession");
-      return { sequence, variants: filteredVariants };
-
-}
 
 export default filterData;

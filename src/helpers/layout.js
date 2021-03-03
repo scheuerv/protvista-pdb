@@ -42,6 +42,8 @@ class LayoutHelper {
             } else { 
                 this.ctx.dataHelper.getPDBeApiDataByName('variation').then(resultData => {
                     const hideSectionOptions = { key: 'variationOption', index: this.ctx.viewerData.tracks.length + 1, label: 'Variation' };
+                    let filteredVariants = resultData.variants.filter(variant=>variant.variant!=null);
+                    resultData.variants = filteredVariants;
                     this.addDynamicTrackSection(resultData, '.pvVariantGraphRow', '.pvVariantGraphSection', '.pvVariantPlotSection', hideSectionOptions);
                 });
             }
@@ -96,7 +98,7 @@ class LayoutHelper {
 
     getTrackLayout(isOverlapping){
         let layout = isOverlapping ? 'overlapping' : 'non-overlapping';
-        return layout
+        return layout;
     }
 
     getTrackHeight(trackDataLength, isOverlapping){
@@ -312,10 +314,12 @@ class LayoutHelper {
     resetZoom(param){
         let currentStartVal = null;
         let currentEndVal = null;
-        let navEle = this.ctx.querySelectorAll('.pvTrack')[0];
-        if (!navEle) return;
+        let manEle = this.ctx.querySelectorAll('protvista-manager')[0];
+        if (!manEle) return;
         
         if(typeof param === 'undefined'){
+          let navEle = this.ctx.querySelectorAll('protvista-pdb-navigation')[0];
+          if (!navEle) return;
           currentStartVal = navEle.getAttribute('displaystart');
           currentEndVal = navEle.getAttribute('displayend');
         }else if(typeof param.trackData != 'undefined'){
@@ -341,28 +345,23 @@ class LayoutHelper {
         }
     
         if(typeof param !== 'undefined' && typeof param.highlight !== 'undefined' && param.highlight){
-          navEle.dispatchEvent(new CustomEvent('change', {
+          manEle.dispatchEvent(new CustomEvent('change', {
             detail: {
-              highlightstart: currentStartVal,
-              highlightend: currentEndVal
+              highlight: currentStartVal+':'+ currentEndVal,
             }, bubbles: true, cancelable: true
           }));
           
         }else{
-
-            navEle.dispatchEvent(new CustomEvent('change', {
-                detail: {
-                  displaystart: currentStartVal,
-                  displayend: currentEndVal
-                }, bubbles: true, cancelable: true
-            }));  
-    
-          navEle.dispatchEvent(new CustomEvent('change', {
-            detail: {
-              highlightstart: null,
-              highlightend: null
-            }, bubbles: true, cancelable: true
-          }));
+            manEle.dispatchEvent(
+                new CustomEvent("change", {
+                  detail: {
+                    displaystart: currentStartVal,
+                    displayend: currentEndVal
+                  },
+                  bubbles: true,
+                  cancelable: true,
+                })
+              );
 
         }
         

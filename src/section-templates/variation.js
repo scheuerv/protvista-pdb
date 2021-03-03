@@ -6,7 +6,7 @@ function PDBePvVariationSection(ctx) {
                     <div class="protvistaCol1 category-label" @click=${e => ctx.layoutHelper.showVariantPlot()}>Variants</div>
 
                     <div class="protvistaCol2 aggregate-track-content pvVariantGraphSection">
-                        <protvista-pdb-variation-graph length="${ctx.viewerData.length}"></protvista-pdb-variation-graph>
+                        <protvista-pdb-variation-graph highlight-event="onmouseover" length="${ctx.viewerData.length}"></protvista-pdb-variation-graph>
                     </div>
                 </div>
 
@@ -15,11 +15,11 @@ function PDBePvVariationSection(ctx) {
                     <div class="protvistaRow">
                         
                         <div class="protvistaCol1 track-label">
-                            <protvista-filter filters='${ctx.variantFilterAttr}'></protvista-filter>
+                            <protvista-filter for="variation-graph"></protvista-filter>
                         </div>
 
                         <div class="protvistaCol2 track-content pvVariantPlotSection">
-                            <protvista-pdb-variation length="${ctx.viewerData.length}"></protvista-pdb-variation>
+                            <protvista-pdb-variation id="variation-graph" highlight-event="onmouseover" length="${ctx.viewerData.length}"></protvista-pdb-variation>
                         </div>
                     </div>
 

@@ -6,3 +6,4 @@ dist/
 *.iml
 node_modules/
 *.log
+package-lock.json

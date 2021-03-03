@@ -12,7 +12,7 @@ function PDBePvTracksSection(ctx) {
                 </span>
             </div>
             <div class="protvistaCol2 aggregate-track-content" style=${styleMap(trackData.labelColor ? {borderBottom: '1px solid lightgrey'} : {})}>
-                <protvista-pdb-track class="pvTrack" length="${ctx.viewerData.length}" layout="${ctx.layoutHelper.getTrackLayout(trackData.overlapping)}" height="${ctx.layoutHelper.getTrackHeight(trackData.length, trackData.overlapping)}"></protvista-pdb-track>
+                <protvista-pdb-track highlight-event="onmouseover" class="pvTrack" length="${ctx.viewerData.length}" layout="${ctx.layoutHelper.getTrackLayout(trackData.overlapping)}" height="${ctx.layoutHelper.getTrackHeight(trackData.length, trackData.overlapping)}"></protvista-pdb-track>
             </div>
         </div>
         <!-- Subtrack Rows Start -->
@@ -32,7 +32,7 @@ function PDBePvTracksSection(ctx) {
                         ` : ``}
                     </div>
                     <div class="protvistaCol2 track-content" style=${styleMap(trackData.labelColor ? {borderBottom: '1px solid lightgrey'} : {})}>
-                        <protvista-pdb-track class="pvSubtrack_${trackIndex}" length="${ctx.viewerData.length}" layout="${ctx.layoutHelper.getTrackLayout(subtrackData.overlapping)}" height="${ctx.layoutHelper.getTrackHeight(subtrackData.length, subtrackData.overlapping)}"></protvista-pdb-track>
+                        <protvista-pdb-track highlight-event="onmouseover" class="pvSubtrack_${trackIndex}" length="${ctx.viewerData.length}" layout="${ctx.layoutHelper.getTrackLayout(subtrackData.overlapping)}" height="${ctx.layoutHelper.getTrackHeight(subtrackData.length, subtrackData.overlapping)}"></protvista-pdb-track>
                     </div>
                 </div>`
             )}

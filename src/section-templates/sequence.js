@@ -8,7 +8,7 @@ function PDBePvSeqSection(ctx) {
 
         <!-- Navigation Component -->
         <div class="protvistaCol2 pvSeqSection">
-            <protvista-sequence length="${ctx.viewerData.length}" sequence="${ctx.viewerData.sequence}"></protvista-sequence>
+            <protvista-sequence highlight-event="onmouseover" length="${ctx.viewerData.length}" sequence="${ctx.viewerData.sequence}"></protvista-sequence>
         </div>
 
     </div>`

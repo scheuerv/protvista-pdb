@@ -1,4 +1,5 @@
 import ProtvistaPdbTrack from "./pdb-track";
+import {listenForTooltips} from "./tooltip";
 import { scaleLinear } from "d3";
 
 class ProtvistaPdbSeqConservation extends ProtvistaPdbTrack {
@@ -26,32 +27,7 @@ class ProtvistaPdbSeqConservation extends ProtvistaPdbTrack {
         this._createTrack();
     }
 
-    _createTrack() {
-        this._layoutObj.init(this._data);
 
-        d3.select(this)
-            .selectAll("svg")
-            .remove();
-
-        this.svg = d3.select(this)
-            .append("div")
-            .append("svg")
-            .style('width', '100%')
-            .attr("height", this._height);
-
-        this.highlighted = this.svg
-            .append("rect")
-            .attr("class", "highlighted")
-            .attr("fill", "rgba(255, 235, 59, 0.8)")
-            .attr("height", this._height);
-
-        this.seq_g = this.svg.append("g").attr("class", "sequence-features").attr("transform", "translate(0,-5)");
-
-        // Set the "property" view as default
-        this.filterData("property");
-        this._createFeatures();
-        this.refresh();
-    }
 
     _createFeatures() {
         // scale for Amino Acids
@@ -67,7 +43,7 @@ class ProtvistaPdbSeqConservation extends ProtvistaPdbTrack {
 
             })
         });
-
+        listenForTooltips(this);
     }
 
     refresh() {
@@ -140,108 +116,50 @@ class ProtvistaPdbSeqConservation extends ProtvistaPdbTrack {
                     .attr("x", d => this.getXFromSeqPosition(d.start) + this.getSingleBaseWidth() / 2)
                     .attr("font-size", d => this.adaptLabelFontSize(this.getSingleBaseWidth(), this._yScale(d.probability)));
 
-                //highlight change
-                this.locations
-                    .on("mouseover", d => {
-                        const self = this;
-                        const e = d3.event;
-
-                        this.dispatchEvent(
-                            new CustomEvent("change", {
-                                detail: {
-                                    highlightend: d.end,
-                                    highlightstart: d.start
-                                },
-                                bubbles: true,
-                                cancelable: true
-                            })
-                        );
-                    })
-                    .on("mouseout", () => {
-                        const self = this;
-                        this.dispatchEvent(
-                            new CustomEvent("change", {
-                                detail: {
-                                    highlightend: null,
-                                    highlightstart: null
-                                },
-                                bubbles: true,
-                                cancelable: true
-                            })
-                        );
-                    });
 
 
                 // add tooltip
                 this.aminorect
                     .attr("tooltip-trigger", "true")
-                    .on("mouseover", d => {
-                        const self = this;
-                        const e = d3.event;
-
-                        const oldToolip = document.querySelectorAll("protvista-tooltip");
-                        if (oldToolip && oldToolip[0] && oldToolip[0].className == 'click-open') {
-                            //do nothing
-                        } else {
-                            window.setTimeout(function() {
-                                const tooltipData = {
-                                    start: d.start,
-                                    end: d.end,
-                                    feature: {
-                                        ...d,
-                                        type: "Amino acid probability"
-                                    }
-                                };
-                                self.createTooltip(e, tooltipData);
-
-                            }, 50);
-                        }
-
+                    .on("mouseover", (f, i, group) => {
                         this.dispatchEvent(
-                            new CustomEvent("protvista-mouseover", {
-                                detail: d,
-                                bubbles: true,
-                                cancelable: true
-                            })
+                            this.createEvent(
+                            "mouseover",
+                             {
+                                ...f,
+                                type: "Amino acid probability"
+                            },
+                            this._highlightEvent === "onmouseover",
+                            false,
+                            f.start,
+                            f.end,
+                            group[i]
+                          )
                         );
-                    })
-                    .on("mouseout", () => {
-                        const self = this;
-
-                        const oldToolip = document.querySelectorAll("protvista-tooltip");
-                        if (oldToolip && oldToolip[0] && oldToolip[0].className == 'click-open') {
-                            //do nothing
-                        } else {
-                            window.setTimeout(function() {
-                                self.removeAllTooltips();
-                            }, 50);
-                        }
-
+                      })
+                      .on("mouseout", () => {
                         this.dispatchEvent(
-                            new CustomEvent("protvista-mouseout", {
-                                detail: null,
-                                bubbles: true,
-                                cancelable: true
-                            })
+                            this.createEvent(
+                            "mouseout",
+                            null,
+                            this._highlightEvent === "onmouseover"
+                          )
                         );
-                    })
-                    .on("click", d => {
-                        const self = this;
-                        const tooltipData = {
-                            start: d.start,
-                            end: d.start,
-                            feature: {
-                                ...d,
-                                type: "Sequence conservation"
-                            }
-                        };
-                        self.createTooltip(d3.event, tooltipData, true);
-                        self.dispatchEvent(
-                            new CustomEvent("protvista-click", {
-                                detail: tooltipData,
-                                bubbles: true,
-                                cancelable: true
-                            })
+                      })
+                    .on("click", (f, i, group) => {
+                        this.dispatchEvent(
+                            this.createEvent(
+                            "click",
+                            {
+                                ...f,
+                                type: "Amino acid probability"
+                            },
+                            this._highlightEvent === "onclick",
+                            true,
+                            f.start,
+                            f.end,
+                            group[i]
+                          )
                         );
                     });
             }

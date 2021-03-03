@@ -1,5 +1,6 @@
 import ProtvistaPdbTrack from "./pdb-track";
-import { render } from "lit-html";
+
+import {listenForTooltips} from "./tooltip";
 import {
     scaleLinear,
 } from "d3";
@@ -58,88 +59,49 @@ class ProtvistaPdbScHistogram extends ProtvistaPdbTrack {
             .attr("tooltip-trigger", "true")
             .attr("id", d => "hsc_" + d.start)
             .attr("fill", "rgb(128, 128, 128)")
-            .on("mouseover", d => {
-                const self = this;
-                const e = d3.event;
-
-                const oldToolip = document.querySelectorAll("protvista-tooltip");
-                if (oldToolip && oldToolip[0] && oldToolip[0].className === 'click-open') {
-                    //do nothing
-                } else {
-                    window.setTimeout(function() {
-                        const tooltipData = {
-                            start: d.start,
-                            end: d.end,
-                            feature: {
-                                ...d,
-                                type: "Sequence conservation"
-                            }
-                        };
-                        self.createTooltip(e, tooltipData);
-
-                    }, 50);
-                }
-
+            .attr("tooltip-trigger", "true")
+            .on("mouseover", (f, i, group) => {
                 this.dispatchEvent(
-                    new CustomEvent("change", {
-                        detail: {
-                            highlightend: d.end,
-                            highlightstart: d.start
-                        },
-                        bubbles: true,
-                        cancelable: true
-                    })
-                );
-            })
-            .on("mouseout", () => {
-                const self = this;
-
-                const oldToolip = document.querySelectorAll("protvista-tooltip");
-                if (oldToolip && oldToolip[0] && oldToolip[0].className == 'click-open') {
-                    //do nothing
-                } else {
-                    window.setTimeout(function() {
-                        self.removeAllTooltips();
-                    }, 50);
-                }
-
-                self.dispatchEvent(
-                    new CustomEvent("change", {
-                        detail: {
-                            highlightend: null,
-                            highlightstart: null
-                        },
-                        bubbles: true,
-                        cancelable: true
-                    })
-                );
-                self.dispatchEvent(
-                    new CustomEvent("protvista-mouseout", {
-                        detail: null,
-                        bubbles: true,
-                        cancelable: true
-                    })
-                );
-            })
-            .on("click", d => {
-                const self = this;
-                const tooltipData = {
-                    start: d.start,
-                    end: d.end,
-                    feature: {
-                        ...d,
+                    this.createEvent(
+                    "mouseover",
+                     {
+                        ...f,
                         type: "Sequence conservation"
-                    }
-                };
-                self.createTooltip(d3.event, tooltipData, true);
-                self.dispatchEvent(
-                    new CustomEvent("protvista-click", {     
-                        detail: tooltipData,
-                        bubbles: true,
-                        cancelable: true
-                    })
+                    },
+                    this._highlightEvent === "onmouseover",
+                    false,
+                    f.start,
+                    f.end,
+                    group[i]
+                  )
+                );
+              })
+              .on("mouseout", () => {
+                this.dispatchEvent(
+                    this.createEvent(
+                    "mouseout",
+                    null,
+                    this._highlightEvent === "onmouseover"
+                  )
+                );
+              })
+            .on("click", (f, i, group) => {
+                this.dispatchEvent(
+                    this.createEvent(
+                    "click",
+                    {
+                        ...f,
+                        type: "Sequence conservation"
+                    },
+                    this._highlightEvent === "onclick",
+                    true,
+                    f.start,
+                    f.end,
+                    group[i]
+                  )
                 );
             });
+            listenForTooltips(this);
     }
 
     refresh() {

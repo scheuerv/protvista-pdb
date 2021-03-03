@@ -70,7 +70,6 @@ class ProtvistaPDB extends HTMLElement {
         this.scrollbarWidth = 0;
         this.formattedSubTracks = [];
         this.zoomedTrack = '';
-        this.variantFilterAttr = JSON.stringify(filterData);
         
         this.displayLoadingMessage();
 
@@ -83,6 +82,8 @@ class ProtvistaPDB extends HTMLElement {
         this.viewerData.displayVariants = (this.pageSection && this.pageSection == '2') ? false : true;
 
         this._render();
+        d3.selectAll("protvista-filter").each(function(){this.filters = filterData;});
+
         const event = new CustomEvent("rendered", {
             detail: {
                 pdbIds: this.viewerData.tracks[0].data.map(d => d.accession)

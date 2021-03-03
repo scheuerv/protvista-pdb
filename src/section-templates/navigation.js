@@ -70,7 +70,7 @@ function PDBePvNavSection(ctx) {
 
         <!-- Navigation Component -->
         <div class="protvistaCol2 pvNavSection">
-            <protvista-pdb-navigation length="${ctx.viewerData.length}" offset="${ctx.viewerData.offset}" ></protvista-pdb-navigation>
+            <protvista-pdb-navigation length="${ctx.viewerData.length}" rulerStart="${ctx.viewerData.offset}" ></protvista-pdb-navigation>
         </div>
 
     </div>`

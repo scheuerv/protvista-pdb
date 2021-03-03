@@ -14,7 +14,7 @@ const config = {
     filename: `${PKG_JSON.name}-${PKG_JSON.version}.js`
   },
   target: "web",
-  devtool: "source-map",
+  devtool: "inline-source-map",
   resolve: {
     extensions: [".js"]
   },

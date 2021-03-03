@@ -6,7 +6,7 @@ function PDBePvScSection(ctx) {
                     <div class="protvistaCol1 category-label" @click=${e => ctx.layoutHelper.showConservationPlot()} style="background-color:rgb(128,128,128); borderBottom:1px solid lightgrey">Sequence conservation</div>
 
                     <div class="protvistaCol2 aggregate-track-content pvConservationHistoSection">
-                        <protvista-pdb-sc-histogram accession="${ctx._entryId ? ctx._entryId : ctx._accession}" length="${ctx.viewerData.length}"></protvista-pdb-sc-histogram>
+                        <protvista-pdb-sc-histogram highlight-event="onmouseover" accession="${ctx._entryId ? ctx._entryId : ctx._accession}" length="${ctx.viewerData.length}"></protvista-pdb-sc-histogram>
                     </div>
                 </div>
                 <div class="pvConservationPlotRow" style="display:none">
@@ -106,7 +106,7 @@ function PDBePvScSection(ctx) {
                         </div>
 
                         <div class="protvistaCol2 track-content pvConservationPlotSection">
-                            <protvista-pdb-seq-consevation accession="${ctx._entryId ? ctx._entryId : ctx._accession}" length="${ctx.viewerData.length}"></protvista-pdb-seq-consevation>
+                            <protvista-pdb-seq-consevation highlight-event="onmouseover" accession="${ctx._entryId ? ctx._entryId : ctx._accession}" length="${ctx.viewerData.length}"></protvista-pdb-seq-consevation>
                         </div>
                     </div>
                 </div>`
